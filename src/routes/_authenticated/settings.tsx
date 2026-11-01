@@ -39,18 +39,18 @@ function SettingsPage() {
   if (!me?.roles.includes("admin")) return <Card><EmptyState title="دسترسی ندارید" /></Card>;
   if (isLoading) return <LoadingState />;
 
-  async function save(e: FormEvent) {
+  async function save(e: FormEvent): Promise<void> {
     e.preventDefault();
-    const rate = Number(form.usd_rate);
-    if (!form.name_fa?.trim()) return toast.error("نام شفاخانه الزامی است");
-    if (!(rate > 0)) return toast.error("نرخ دالر باید بیشتر از صفر باشد");
+    const rate = Number((form["usd_rate"] ?? ""));
+    if (!(form["name_fa"] ?? "")?.trim()) return void toast.error("نام شفاخانه الزامی است");
+    if (!(rate > 0)) return void toast.error("نرخ دالر باید بیشتر از صفر باشد");
     setBusy(true);
     const { error } = await supabase.from("hospital_settings").update({
-      name_fa: form.name_fa.trim(), name_en: form.name_en.trim(), address: form.address || null, phone: form.phone || null,
-      email: form.email || null, logo_url: form.logo_url || null, usd_rate: rate, updated_at: new Date().toISOString(),
+      name_fa: (form["name_fa"] ?? "").trim(), name_en: (form["name_en"] ?? "").trim(), address: (form["address"] ?? "") || null, phone: (form["phone"] ?? "") || null,
+      email: (form["email"] ?? "") || null, logo_url: (form["logo_url"] ?? "") || null, usd_rate: rate, updated_at: new Date().toISOString(),
     }).eq("id", 1);
     setBusy(false);
-    if (error) return toast.error("ذخیره ناموفق بود");
+    if (error) return void toast.error("ذخیره ناموفق بود");
     toast.success("تنظیمات ذخیره شد");
     qc.invalidateQueries({ queryKey: ["hospital-settings"] });
   }
@@ -74,7 +74,7 @@ function SettingsPage() {
             <div className="space-y-1.5"><Label>ارز پیش‌فرض</Label><Input value="افغانی (AFN)" disabled /></div>
             <div className="space-y-1.5">
               <Label>نرخ یک دالر به افغانی</Label>
-              <Input type="number" step="0.01" dir="ltr" value={form.usd_rate ?? ""} onChange={(e) => setForm({ ...form, usd_rate: e.target.value })} />
+              <Input type="number" step="0.01" dir="ltr" value={(form["usd_rate"] ?? "") ?? ""} onChange={(e) => setForm({ ...form, usd_rate: e.target.value })} />
             </div>
             <Button type="submit" className="w-full" disabled={busy}>ذخیره تنظیمات</Button>
           </div>

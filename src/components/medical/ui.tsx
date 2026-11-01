@@ -3,7 +3,7 @@ import type { LucideIcon } from "lucide-react";
 import { Inbox, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export function PageHeader({ title, subtitle, actions }: { title: string; subtitle?: string; actions?: ReactNode }) {
+export function PageHeader({ title, subtitle, actions }: { title: string; subtitle?: string | undefined; actions?: ReactNode }) {
   return (
     <div className="mb-6 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4">
       <div className="min-w-0">
@@ -59,7 +59,7 @@ export function StatusBadge({ tone = "primary", children }: { tone?: keyof typeo
   return <span className={cn("inline-flex rounded px-2 py-0.5 text-[11px] font-semibold", tones[tone].soft)}>{children}</span>;
 }
 
-export function EmptyState({ title, text, icon: Icon = Inbox }: { title: string; text?: string; icon?: LucideIcon }) {
+export function EmptyState({ title, text, icon: Icon = Inbox }: { title: string; text?: string | undefined; icon?: LucideIcon }) {
   return (
     <div className="flex flex-col items-center justify-center py-10 text-center">
       <div className="grid h-14 w-14 place-items-center rounded-full bg-primary-soft text-primary"><Icon className="h-6 w-6" /></div>

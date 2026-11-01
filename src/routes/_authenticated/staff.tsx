@@ -21,6 +21,7 @@ export const Route = createFileRoute("/_authenticated/staff")({
   component: StaffPage,
 });
 
+type CreateInput = { full_name: string; email: string; password: string; phone?: string | undefined; roles: AppRole[] };
 type Staff = Awaited<ReturnType<typeof listStaff>>[number];
 
 function RolePicker({ value, onChange }: { value: AppRole[]; onChange: (r: AppRole[]) => void }) {
@@ -51,12 +52,12 @@ function StaffPage() {
   const rows = useMemo(() => (data ?? []).filter((s) => !q || s.full_name.includes(q) || s.email.includes(q)), [data, q]);
 
   const createM = useMutation({
-    mutationFn: (d: Parameters<typeof create>[0]["data"]) => create({ data: d }),
+    mutationFn: (d: CreateInput) => create({ data: d }),
     onSuccess: () => { toast.success("کارمند اضافه شد"); setAdding(false); qc.invalidateQueries({ queryKey: ["staff"] }); },
     onError: (e: Error) => toast.error(e.message),
   });
   const updateM = useMutation({
-    mutationFn: (d: Parameters<typeof update>[0]["data"]) => update({ data: d }),
+    mutationFn: (d: { id: string; roles: AppRole[]; is_active: boolean }) => update({ data: d }),
     onSuccess: () => { toast.success("تغییرات ذخیره شد"); setEditing(null); qc.invalidateQueries({ queryKey: ["staff"] }); },
     onError: (e: Error) => toast.error(e.message),
   });
@@ -102,13 +103,13 @@ function StaffPage() {
   );
 }
 
-function AddDialog({ open, onClose, onSubmit, busy }: { open: boolean; onClose: () => void; busy: boolean; onSubmit: (d: { full_name: string; email: string; password: string; phone?: string; roles: AppRole[] }) => void }) {
+function AddDialog({ open, onClose, onSubmit, busy }: { open: boolean; onClose: () => void; busy: boolean; onSubmit: (d: CreateInput) => void }) {
   const [f, setF] = useState({ full_name: "", email: "", password: "", phone: "" });
   const [roles, setRoles] = useState<AppRole[]>([]);
-  function submit(e: FormEvent) {
+  function submit(e: FormEvent): void {
     e.preventDefault();
-    if (!roles.length) return toast.error("حداقل یک نقش انتخاب کنید");
-    if (f.password.length < 8) return toast.error("رمز عبور باید حداقل ۸ حرف باشد");
+    if (!roles.length) return void toast.error("حداقل یک نقش انتخاب کنید");
+    if (f.password.length < 8) return void toast.error("رمز عبور باید حداقل ۸ حرف باشد");
     onSubmit({ ...f, phone: f.phone || undefined, roles });
   }
   return (

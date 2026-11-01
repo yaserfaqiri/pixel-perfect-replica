@@ -34,13 +34,13 @@ function AuthPage() {
   const [name, setName] = useState("");
   const [sent, setSent] = useState(false);
 
-  async function submit(e: FormEvent) {
+  async function submit(e: FormEvent): Promise<void> {
     e.preventDefault();
     setBusy(true);
     if (mode === "in") {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       setBusy(false);
-      if (error) return toast.error("ایمیل یا رمز عبور اشتباه است");
+      if (error) return void toast.error("ایمیل یا رمز عبور اشتباه است");
       navigate({ to: "/dashboard" });
     } else {
       const { error } = await supabase.auth.signUp({
@@ -48,7 +48,7 @@ function AuthPage() {
         options: { emailRedirectTo: window.location.origin, data: { full_name: name } },
       });
       setBusy(false);
-      if (error) return toast.error(error.message.includes("Password") ? "رمز عبور باید حداقل ۸ حرف باشد" : "ثبت ناموفق بود");
+      if (error) return void toast.error(error.message.includes("Password") ? "رمز عبور باید حداقل ۸ حرف باشد" : "ثبت ناموفق بود");
       setSent(true);
     }
   }
