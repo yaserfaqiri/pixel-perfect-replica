@@ -14,16 +14,153 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      branches: {
+        Row: {
+          address: string | null
+          created_at: string
+          id: string
+          is_active: boolean
+          name: string
+          phone: string | null
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          phone?: string | null
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          phone?: string | null
+        }
+        Relationships: []
+      }
+      hospital_settings: {
+        Row: {
+          address: string | null
+          default_currency: string
+          email: string | null
+          id: number
+          logo_url: string | null
+          name_en: string
+          name_fa: string
+          phone: string | null
+          updated_at: string
+          usd_rate: number
+        }
+        Insert: {
+          address?: string | null
+          default_currency?: string
+          email?: string | null
+          id?: number
+          logo_url?: string | null
+          name_en?: string
+          name_fa?: string
+          phone?: string | null
+          updated_at?: string
+          usd_rate?: number
+        }
+        Update: {
+          address?: string | null
+          default_currency?: string
+          email?: string | null
+          id?: number
+          logo_url?: string | null
+          name_en?: string
+          name_fa?: string
+          phone?: string | null
+          updated_at?: string
+          usd_rate?: number
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          branch_id: string | null
+          created_at: string
+          full_name: string
+          id: string
+          is_active: boolean
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          branch_id?: string | null
+          created_at?: string
+          full_name?: string
+          id: string
+          is_active?: boolean
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          branch_id?: string | null
+          created_at?: string
+          full_name?: string
+          id?: string
+          is_active?: boolean
+          phone?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profiles_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role:
+        | "admin"
+        | "reception"
+        | "triage"
+        | "doctor"
+        | "pharmacy"
+        | "optical"
+        | "diagnostics"
+        | "surgery"
+        | "cashier"
+        | "inventory"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +287,19 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: [
+        "admin",
+        "reception",
+        "triage",
+        "doctor",
+        "pharmacy",
+        "optical",
+        "diagnostics",
+        "surgery",
+        "cashier",
+        "inventory",
+      ],
+    },
   },
 } as const
